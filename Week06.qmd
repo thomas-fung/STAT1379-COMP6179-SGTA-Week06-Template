@@ -1,0 +1,243 @@
+---
+title: "STAT1378/COMP6179 Week 6 SGTA"
+subtitle: "Iteration with purrr 🚀"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    embed-resources: true
+execute:
+  echo: true
+  eval: true
+  warning: false
+  message: false
+---
+
+```{r packages}
+#| eval: true
+library(tidyverse)
+library(here)
+library(glue)
+library(lubridate)
+```
+
+# Learning Objectives 🎯
+
+By the end of this SGTA, you will be able to:
+
+1. Solve  repeating task problems using the `map()` family of functions
+2. Apply  functional programming  principles with `purrr`
+3. Choose appropriate `map_*()` variants for different output formats
+4. Use  anonymous functions  and formula syntax with `purrr`
+5. Apply iteration techniques to real data analysis problems
+
+# Quick Start: Explore Basic Patterns 🔧
+
+**Instructions:** Predict what each code block will return, then run it to check your understanding.
+
+```{r purrr-exploration}
+# Basic mapping with map()
+negatives <- list(-25, -31, -111)
+map(negatives, abs)
+
+list1 <- list(1, 2, 3, 4, 5)
+map(list1, log)
+
+# Changing output format
+map_dbl(list1, log)
+
+# Working with matrices
+x <- matrix(1:100, nrow = 25, ncol = 4)
+
+# Using formula syntax
+map_dbl(1:25, ~ sum(x[.x, ]))
+
+# Working with lists and glue
+x <- list(x1 = 1:5, x2 = 11:15, x3 = c("a", "b", "c"))
+map(x, ~ glue("This slot is of length {length(.x)} and class {glue_collapse(class(.x), ', ', last = ' and ')}."))
+```
+
+**Challenge:** Try to predict what this code will do before running it:
+
+```{r purrr-challenge}
+x <- list(x1 = 1:5, x2 = 11:15, x3 = c("a", "b", "c"))
+
+set.seed(1024)
+# Why doesn't this work?
+map(x, ~ rnorm(length(.x))) |> 
+  bind_cols()
+```
+
+**Your prediction:**
+
+_Write your thoughts here..._
+
+# Exercise 1: Debug the Code 🐛
+
+What's wrong with the following code? Fix it and explain why your solution works.
+
+```{r debug-exercise}
+library(stringr)
+strings <- list("Mary", "John", "Jill")
+map_dbl(strings, str_sub, start = 1, end = 1)
+```
+
+**Your diagnosis:**
+
+_What's the problem?_
+
+**Your fix:**
+
+```{r debug-fix}
+# Write your corrected code here
+```
+
+# Exercise 2: UK Lung Disease Deaths Analysis 📊
+
+Load the data:
+
+```{r load-ldeaths}
+#| eval: true
+# Load the reformatted data
+ldeaths_list <- readRDS(here::here("data", "ldeaths_list.RData"))
+ldeaths_list
+```
+
+## Part A: Annual Totals
+
+Find the total number of deaths for each year.
+
+```{r annual-totals}
+# Your code here
+```
+
+## Part B: Grand Total
+
+Compute the total number of deaths across all years.
+
+```{r grand-total}
+# Your code here
+```
+
+## Part C: Data Wrangling Challenge 🌟
+
+Create this target format from the original `ldeaths` data:
+
+**Hint:** Start with `as.vector(ldeaths)` and use `time <- ym("1974-01") + months(0:71)`
+
+
+```{r ldeaths-wrangling}
+# Step 1: Create the time variable
+
+
+# Step 2: Create tidy format
+
+
+# Step 3: Create wide format
+
+```
+
+## Part D: Back to List Format 🔄
+
+Convert your wide format back to the original list format.
+
+```{r list-conversion}
+# Your code here
+# Hint: You might need a helper function
+```
+
+# Exercise 3: Confidence Interval Simulation 📈
+
+Your task is to recreate this visualisation using iteration techniques:
+
+Follow these steps:
+
+## Step 1: Create Population
+
+```{r ci-step1}
+set.seed(1234)
+
+# Create a normal population (size 2000, mean 1.7, sd 0.1)
+mu_x <- 1.7
+sd_x <- 0.1
+
+# Your code here
+```
+
+## Step 2: Simulate 100 Confidence Intervals
+
+```{r ci-step2}
+n <- 50      # sample size
+alpha <- 0.05 # significance level
+
+# Use map_df() to create 100 CIs
+# Formula: mean ± 1.96 * (sd/sqrt(n))
+
+# Your code here
+```
+
+## Step 3: Create the Plot
+
+```{r ci-step3}
+# Use geom_segment() and geom_vline()
+# Your code here
+```
+
+## Bonus: Make it Flexible 🌟
+
+Create a function that handles any sample size and confidence level:
+
+```{r ci-function}
+create_ci_simulation <- function(pop_mean = 1.7, pop_sd = 0.1, 
+                                pop_size = 2000, sample_size = 50, 
+                                confidence = 0.95, n_simulations = 100) {
+  
+  # Your function code here
+  
+}
+
+# Test with different parameters
+create_ci_simulation(sample_size = 30, confidence = 0.90)
+```
+
+# Optional: Base R Apply Family 🔧
+
+Try these Base R alternatives:
+
+```{r apply-exploration}
+# Working with matrices
+x <- matrix(1:100, nrow = 25, ncol = 4)
+
+# Row sums using apply()
+
+
+# Column sums using apply()
+
+
+# Working with lists using sapply()
+x <- list(x1 = 1:5, x2 = 11:15, x3 = c("a", "b", "c"))
+
+# Get lengths using sapply()
+
+
+# Compare with purrr equivalent
+
+```
+
+# Reflection Questions 💭
+
+1. **Output Types:** When would you choose `map()` vs `map_dbl()` vs `map_chr()`?
+
+2. **Formula Syntax:** What are the advantages of using `~ .x` syntax in `purrr`?
+
+3. **Comparison:** How does `purrr` compare to Base R's apply family?
+
+4. **Real Applications:** Think of a data analysis task where iteration would be useful.
+
+# Notes Section 📝
+
+_Use this space for your own notes, observations, or questions:_
+
+---
+
+**Remember:** The key to mastering iteration is practice! Start with simple examples and gradually work up to more complex workflows. 🚀
